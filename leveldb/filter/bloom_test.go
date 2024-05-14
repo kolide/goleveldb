@@ -8,8 +8,9 @@ package filter
 
 import (
 	"encoding/binary"
-	"github.com/syndtr/goleveldb/leveldb/util"
 	"testing"
+
+	"github.com/kolide/goleveldb/leveldb/util"
 )
 
 type harness struct {
