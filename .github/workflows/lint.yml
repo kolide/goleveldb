@@ -20,24 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: './go.mod'
-          check-latest: true
-          cache: false
-
-      - run: make deps
-
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@4696ba8
         with:
           skip-save-cache: true
 
-      # Run again as a workaround for https://github.com/golangci/golangci-lint-action/issues/362
-      - name: golangci-lint
-        if: ${{ always() }}
-        run: golangci-lint run
   govulncheck:
     strategy:
       fail-fast: false
