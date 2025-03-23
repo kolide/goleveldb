@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@4696ba8
+        uses: golangci/golangci-lint-action@4696ba8babb6127d732c3c6dde519db15edab9ea
         with:
           skip-save-cache: true
 
