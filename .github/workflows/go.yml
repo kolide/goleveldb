@@ -57,10 +57,11 @@ jobs:
         enableCrossOsArchive: true
 
     - name: Short Test
-      run: go test -cover -coverprofile=coverage.out -short -timeout 1h ./...
+      shell: bash
+      run: go test -cover -coverprofile=coverage.out -short -timeout 10m ./...
 
     - name: Race Test
-      run: go test -timeout 30m -race -run "TestDB_(Concurrent|GoleveldbIssue74)" ./leveldb
+      run: go test -timeout 10m -race -run "TestDB_(Concurrent|GoleveldbIssue74)" ./leveldb
 
     - name: Upload coverage
       uses: actions/upload-artifact@v4
