@@ -15,7 +15,7 @@ linters:
     - sloglint
     - sqlclosecheck
     - staticcheck
-    - tenv
+    - usetesting
     - unconvert
     - unused
     # Things we should add, but this code base needs work to port them
