@@ -24,10 +24,17 @@ jobs:
           go-version-file: './go.mod'
           check-latest: true
 
+      - name: WTF windows
+        run: gofmt -w leveldb/comparer/bytes_comparer.go
+      - name: WTF windoews 2
+        run: git diff leveldb/comparer/bytes_comparer.go
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@4696ba8babb6127d732c3c6dde519db15edab9ea
         with:
           skip-save-cache: true
+
+
 
   govulncheck:
     strategy:
