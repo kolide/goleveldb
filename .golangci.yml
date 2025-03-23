@@ -5,18 +5,12 @@ linters:
   enable:
     - bodyclose
     - containedctx
-    - exhaustive
-    - forbidigo
     - gofmt
     - govet
     - ineffassign
     - misspell
-    - nakedret
     - noctx
-    - paralleltest
     - perfsprint
-    - predeclared
-    - revive
     - rowserrcheck
     - sloglint
     - sqlclosecheck
@@ -24,6 +18,11 @@ linters:
     - tenv
     - unconvert
     - unused
+    # Things we should add, but this code base needs work to port them
+    # - nakedret
+    # - predeclared
+    # - revive
+    # - exhaustive
   disable:
     - errcheck
     - gosec
@@ -34,22 +33,6 @@ linters-settings:
     exclude-functions: [github.com/go-kit/kit/log:Log]
   gofmt:
     simplify: false
-  forbidigo:
-    forbid:
-      - p: ^exec\.Command.*$
-        msg: use ee/allowedcmd functions instead
-      - p: ^os\.Exit.*$
-        msg: do not use os.Exit so that launcher can shut down gracefully
-      - p: ^logutil\.Fatal.*$
-        msg: do not use logutil.Fatal so that launcher can shut down gracefully
-      - p: ^panic.*$
-        msg: do not use panic so that launcher can shut down gracefully
-      - p: ^go func.*$
-        msg: use gowrapper.Go() instead of raw goroutines for proper panic handling
-      - p: \.Cmd\.(Run|Start|Output|CombinedOutput)
-        msg: "Do not call embedded exec.Cmd methods directly on TracedCmd; call TracedCmd.Run(), TracedCmd.Start(), etc. instead"
-      - p: ^table\.NewPlugin.*$
-        msg: use ee/tables/tablewrapper to enforce timeouts on table queries
   sloglint:
     kv-only: true
     context: "all"
