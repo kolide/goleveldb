@@ -57,7 +57,7 @@ jobs:
         enableCrossOsArchive: true
 
     - name: Short Test
-      run: go test -short -timeout 1h ./...
+      run: go test -cover -coverprofile=coverage.out -short -timeout 1h ./...
 
     - name: Race Test
       run: go test -timeout 30m -race -run "TestDB_(Concurrent|GoleveldbIssue74)" ./leveldb
