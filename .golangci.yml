@@ -18,6 +18,7 @@ linters:
     - usetesting
     - unconvert
     - unused
+    - gocritic
     # Things we should add, but this code base needs work to port them
     # - nakedret
     # - predeclared
@@ -33,6 +34,10 @@ linters-settings:
     exclude-functions: [github.com/go-kit/kit/log:Log]
   gofmt:
     simplify: false
+  gocritic:
+    disabled-checks:
+      - ifElseChain
+      - elseif
   sloglint:
     kv-only: true
     context: "all"
