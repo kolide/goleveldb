@@ -92,7 +92,6 @@ func TestFileStorage_MetaSetGet(t *testing.T) {
 			t.Fatalf("Invalid meta (%d): got '%s', want '%s'", i, rfd, fd)
 		}
 	}
-	os.RemoveAll(temp)
 }
 
 func TestFileStorage_Meta(t *testing.T) {
@@ -279,7 +278,6 @@ func TestFileStorage_Meta(t *testing.T) {
 				t.Logf("-> %s", fi.Name())
 			}
 		}
-		os.RemoveAll(temp)
 	}
 }
 
