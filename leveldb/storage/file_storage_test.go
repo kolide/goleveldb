@@ -55,12 +55,6 @@ var invalidCases = []string{
 	"100.lop",
 }
 
-func tempDir(t *testing.T) string {
-	dir := t.TempDir()
-	t.Log("Using temp-dir:", dir)
-	return dir
-}
-
 func TestFileStorage_CreateFileName(t *testing.T) {
 	for _, c := range cases {
 		if name := fsGenName(FileDesc{c.ftype, c.num}); name != c.name {
@@ -70,7 +64,7 @@ func TestFileStorage_CreateFileName(t *testing.T) {
 }
 
 func TestFileStorage_MetaSetGet(t *testing.T) {
-	temp := tempDir(t)
+	temp := t.TempDir()
 	fs, err := OpenFile(temp, false)
 	if err != nil {
 		t.Fatal("OpenFile: got error: ", err)
@@ -217,7 +211,7 @@ func TestFileStorage_Meta(t *testing.T) {
 	}
 	for i, tc := range cases {
 		t.Logf("Test-%d", i)
-		temp := tempDir(t)
+		temp := t.TempDir()
 		fs, err := OpenFile(temp, false)
 		if err != nil {
 			t.Fatal("OpenFile: got error: ", err)
@@ -316,8 +310,7 @@ func TestFileStorage_InvalidFileName(t *testing.T) {
 }
 
 func TestFileStorage_Locking(t *testing.T) {
-	temp := tempDir(t)
-	defer os.RemoveAll(temp)
+	temp := t.TempDir()
 
 	p1, err := OpenFile(temp, false)
 	if err != nil {
@@ -359,8 +352,7 @@ func TestFileStorage_Locking(t *testing.T) {
 }
 
 func TestFileStorage_ReadOnlyLocking(t *testing.T) {
-	temp := tempDir(t)
-	defer os.RemoveAll(temp)
+	temp := t.TempDir()
 
 	p1, err := OpenFile(temp, false)
 	if err != nil {
