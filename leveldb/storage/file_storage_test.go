@@ -11,10 +11,8 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
-	"time"
 )
 
 var cases = []struct {
@@ -71,6 +69,7 @@ func TestFileStorage_MetaSetGet(t *testing.T) {
 	if err != nil {
 		t.Fatal("OpenFile: got error: ", err)
 	}
+	defer fs.Close()
 
 	for i := 0; i < 10; i++ {
 		num := rand.Int63()
@@ -93,11 +92,6 @@ func TestFileStorage_MetaSetGet(t *testing.T) {
 		if fd != rfd {
 			t.Fatalf("Invalid meta (%d): got '%s', want '%s'", i, rfd, fd)
 		}
-	}
-
-	// On windows, this test seems to have trouble with cleanup. Sleep to let whatever exit
-	if runtime.GOOS == "windows" {
-		time.Sleep(3 * time.Second)
 	}
 }
 
@@ -222,6 +216,8 @@ func TestFileStorage_Meta(t *testing.T) {
 		if err != nil {
 			t.Fatal("OpenFile: got error: ", err)
 		}
+		defer fs.Close()
+
 		for _, cur := range tc.currents {
 			var curName string
 			switch {
