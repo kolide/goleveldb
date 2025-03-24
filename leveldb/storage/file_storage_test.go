@@ -8,7 +8,6 @@ package storage
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -56,15 +55,6 @@ var invalidCases = []string{
 	"100.lop",
 }
 
-func tempDir(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "goleveldb-")
-	if err != nil {
-		t.Fatal(t)
-	}
-	t.Log("Using temp-dir:", dir)
-	return dir
-}
-
 func TestFileStorage_CreateFileName(t *testing.T) {
 	for _, c := range cases {
 		if name := fsGenName(FileDesc{c.ftype, c.num}); name != c.name {
@@ -74,11 +64,12 @@ func TestFileStorage_CreateFileName(t *testing.T) {
 }
 
 func TestFileStorage_MetaSetGet(t *testing.T) {
-	temp := tempDir(t)
+	temp := t.TempDir()
 	fs, err := OpenFile(temp, false)
 	if err != nil {
 		t.Fatal("OpenFile: got error: ", err)
 	}
+	defer fs.Close()
 
 	for i := 0; i < 10; i++ {
 		num := rand.Int63()
@@ -102,7 +93,6 @@ func TestFileStorage_MetaSetGet(t *testing.T) {
 			t.Fatalf("Invalid meta (%d): got '%s', want '%s'", i, rfd, fd)
 		}
 	}
-	os.RemoveAll(temp)
 }
 
 func TestFileStorage_Meta(t *testing.T) {
@@ -221,11 +211,13 @@ func TestFileStorage_Meta(t *testing.T) {
 	}
 	for i, tc := range cases {
 		t.Logf("Test-%d", i)
-		temp := tempDir(t)
+		temp := t.TempDir()
 		fs, err := OpenFile(temp, false)
 		if err != nil {
 			t.Fatal("OpenFile: got error: ", err)
 		}
+		defer fs.Close()
+
 		for _, cur := range tc.currents {
 			var curName string
 			switch {
@@ -241,7 +233,7 @@ func TestFileStorage_Meta(t *testing.T) {
 			if cur.corrupt {
 				content = content[:len(content)-1-rand.Intn(3)]
 			}
-			if err := ioutil.WriteFile(filepath.Join(temp, curName), []byte(content), 0644); err != nil {
+			if err := os.WriteFile(filepath.Join(temp, curName), []byte(content), 0644); err != nil {
 				t.Fatal(err)
 			}
 			if cur.manifest {
@@ -274,7 +266,7 @@ func TestFileStorage_Meta(t *testing.T) {
 			if ret.Num != tc.expect {
 				t.Fatalf("invalid num, expect=%d got=%d", tc.expect, ret.Num)
 			}
-			fis, err := ioutil.ReadDir(temp)
+			fis, err := os.ReadDir(temp)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -289,7 +281,6 @@ func TestFileStorage_Meta(t *testing.T) {
 				t.Logf("-> %s", fi.Name())
 			}
 		}
-		os.RemoveAll(temp)
 	}
 }
 
@@ -320,8 +311,7 @@ func TestFileStorage_InvalidFileName(t *testing.T) {
 }
 
 func TestFileStorage_Locking(t *testing.T) {
-	temp := tempDir(t)
-	defer os.RemoveAll(temp)
+	temp := t.TempDir()
 
 	p1, err := OpenFile(temp, false)
 	if err != nil {
@@ -363,8 +353,7 @@ func TestFileStorage_Locking(t *testing.T) {
 }
 
 func TestFileStorage_ReadOnlyLocking(t *testing.T) {
-	temp := tempDir(t)
-	defer os.RemoveAll(temp)
+	temp := t.TempDir()
 
 	p1, err := OpenFile(temp, false)
 	if err != nil {

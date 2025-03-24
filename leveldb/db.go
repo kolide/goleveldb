@@ -565,7 +565,7 @@ func (db *DB) recoverJournal() error {
 					fr.Close()
 					return err
 				}
-				ofd = storage.FileDesc{}
+				ofd = storage.FileDesc{} //nolint:staticcheck
 			}
 
 			// Replay journal to memdb.

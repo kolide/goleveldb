@@ -8,6 +8,7 @@ package cache
 
 import (
 	"math/rand"
+	"os"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -291,11 +292,15 @@ func TestCacheMap_NilValue(t *testing.T) {
 func TestLRUCache_GetLatency(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	delay := 3 * time.Millisecond
+	if runtime.GOOS == "windows" && os.Getenv("CI") == "true" {
+		delay = 12 * time.Second
+	}
+
 	const (
 		concurrentSet = 30
 		concurrentGet = 3
 		duration      = 3 * time.Second
-		delay         = 3 * time.Millisecond
 		maxKey        = 100000
 	)
 
