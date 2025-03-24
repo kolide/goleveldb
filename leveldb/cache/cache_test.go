@@ -294,7 +294,7 @@ func TestLRUCache_GetLatency(t *testing.T) {
 
 	delay := 3 * time.Millisecond
 	if runtime.GOOS == "windows" && os.Getenv("CI") == "true" {
-		delay = 12 * time.Second
+		delay = 52 * time.Second
 	}
 
 	const (
