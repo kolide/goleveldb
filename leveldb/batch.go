@@ -219,8 +219,12 @@ func (b *Batch) decode(data []byte, expectedLen int) error {
 
 func (b *Batch) putMem(seq uint64, mdb *memdb.DB) error {
 	var ik []byte
+	var err error
 	for i, index := range b.index {
-		ik = makeInternalKey(ik, index.k(b.data), seq+uint64(i), index.keyType)
+		ik, err = makeInternalKey(ik, index.k(b.data), seq+uint64(i), index.keyType)
+		if err != nil {
+			return err
+		}
 		if err := mdb.Put(ik, index.v(b.data)); err != nil {
 			return err
 		}
@@ -330,7 +334,11 @@ func decodeBatchToMem(data []byte, expectSeq uint64, mdb *memdb.DB) (seq uint64,
 		if i >= batchLen {
 			return newErrBatchCorrupted("invalid records length")
 		}
-		ik = makeInternalKey(ik, index.k(data), seq+uint64(i), index.keyType)
+		var ikErr error
+		ik, ikErr = makeInternalKey(ik, index.k(data), seq+uint64(i), index.keyType)
+		if ikErr != nil {
+			return ikErr
+		}
 		if err := mdb.Put(ik, index.v(data)); err != nil {
 			return err
 		}

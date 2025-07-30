@@ -332,12 +332,25 @@ func (v *version) pickMemdbLevel(umin, umax []byte, maxLevel int) (level int) {
 		if len(v.levels) == 0 {
 			return maxLevel
 		}
-		if !v.levels[0].overlaps(v.s.icmp, umin, umax, true) {
+		// l0Overlaps is true if the level 0 files overlap with the given range
+		l0Overlaps, err := v.levels[0].overlaps(v.s.icmp, umin, umax, true)
+		if err != nil {
+			// Conservative: if we can't determine overlaps, use maxLevel
+			return maxLevel
+		}
+		if !l0Overlaps {
 			var overlaps tFiles
 			for ; level < maxLevel; level++ {
-				if pLevel := level + 1; pLevel >= len(v.levels) {
+				pLevel := level + 1
+				if pLevel >= len(v.levels) {
 					return maxLevel
-				} else if v.levels[pLevel].overlaps(v.s.icmp, umin, umax, false) {
+				}
+				pLevelOverlaps, err := v.levels[pLevel].overlaps(v.s.icmp, umin, umax, false)
+				if err != nil {
+					// Conservative: if we can't determine overlaps, break early
+					break
+				}
+				if pLevelOverlaps {
 					break
 				}
 				if gpLevel := level + 2; gpLevel < len(v.levels) {

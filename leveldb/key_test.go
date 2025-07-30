@@ -16,7 +16,11 @@ import (
 var defaultIComparer = &iComparer{comparer.DefaultComparer}
 
 func ikey(key string, seq uint64, kt keyType) internalKey {
-	return makeInternalKey(nil, []byte(key), seq, kt)
+	ik, err := makeInternalKey(nil, []byte(key), seq, kt)
+	if err != nil {
+		panic(err) // Test helper - should not fail with valid parameters
+	}
+	return ik
 }
 
 func shortSep(a, b []byte) []byte {

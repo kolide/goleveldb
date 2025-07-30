@@ -165,27 +165,31 @@ func (tf tFiles) searchMaxUkey(icmp *iComparer, umax []byte) int {
 
 // Returns true if given key range overlaps with one or more
 // tables key range. If unsorted is true then binary search will not be used.
-func (tf tFiles) overlaps(icmp *iComparer, umin, umax []byte, unsorted bool) bool {
+func (tf tFiles) overlaps(icmp *iComparer, umin, umax []byte, unsorted bool) (bool, error) {
 	if unsorted {
 		// Check against all files.
 		for _, t := range tf {
 			if t.overlaps(icmp, umin, umax) {
-				return true
+				return true, nil
 			}
 		}
-		return false
+		return false, nil
 	}
 
 	i := 0
 	if len(umin) > 0 {
 		// Find the earliest possible internal key for min.
-		i = tf.searchMax(icmp, makeInternalKey(nil, umin, keyMaxSeq, keyTypeSeek))
+		ikey, err := makeInternalKey(nil, umin, keyMaxSeq, keyTypeSeek)
+		if err != nil {
+			return false, err
+		}
+		i = tf.searchMax(icmp, ikey)
 	}
 	if i >= len(tf) {
 		// Beginning of range is after all files, so no overlap.
-		return false
+		return false, nil
 	}
-	return !tf[i].before(icmp, umax)
+	return !tf[i].before(icmp, umax), nil
 }
 
 // Returns tables whose its key range overlaps with given key range.

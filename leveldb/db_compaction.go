@@ -629,7 +629,12 @@ func (db *DB) tableRangeCompaction(level int, umin, umax []byte) error {
 			m := 1
 			for i := m; i < len(v.levels); i++ {
 				tables := v.levels[i]
-				if tables.overlaps(db.s.icmp, umin, umax, false) {
+				overlaps, err := tables.overlaps(db.s.icmp, umin, umax, false)
+				if err != nil {
+					v.release()
+					return err
+				}
+				if overlaps {
 					m = i
 				}
 			}

@@ -779,7 +779,10 @@ func memGet(mdb *memdb.DB, ikey internalKey, icmp *iComparer) (ok bool, mv []byt
 }
 
 func (db *DB) get(auxm *memdb.DB, auxt tFiles, key []byte, seq uint64, ro *opt.ReadOptions) (value []byte, err error) {
-	ikey := makeInternalKey(nil, key, seq, keyTypeSeek)
+	ikey, err := makeInternalKey(nil, key, seq, keyTypeSeek)
+	if err != nil {
+		return nil, err
+	}
 
 	if auxm != nil {
 		if ok, mv, me := memGet(auxm, ikey, db.s.icmp); ok {
@@ -817,7 +820,10 @@ func nilIfNotFound(err error) error {
 }
 
 func (db *DB) has(auxm *memdb.DB, auxt tFiles, key []byte, seq uint64, ro *opt.ReadOptions) (ret bool, err error) {
-	ikey := makeInternalKey(nil, key, seq, keyTypeSeek)
+	ikey, err := makeInternalKey(nil, key, seq, keyTypeSeek)
+	if err != nil {
+		return false, err
+	}
 
 	if auxm != nil {
 		if ok, _, me := memGet(auxm, ikey, db.s.icmp); ok {
@@ -1142,8 +1148,14 @@ func (db *DB) SizeOf(ranges []util.Range) (Sizes, error) {
 
 	sizes := make(Sizes, 0, len(ranges))
 	for _, r := range ranges {
-		imin := makeInternalKey(nil, r.Start, keyMaxSeq, keyTypeSeek)
-		imax := makeInternalKey(nil, r.Limit, keyMaxSeq, keyTypeSeek)
+		imin, err := makeInternalKey(nil, r.Start, keyMaxSeq, keyTypeSeek)
+		if err != nil {
+			return nil, err
+		}
+		imax, err := makeInternalKey(nil, r.Limit, keyMaxSeq, keyTypeSeek)
+		if err != nil {
+			return nil, err
+		}
 		start, err := v.offsetOf(imin)
 		if err != nil {
 			return nil, err

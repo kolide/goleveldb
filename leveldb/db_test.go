@@ -277,7 +277,11 @@ func (h *dbHarness) allEntriesFor(key, want string) {
 	db := h.db
 	s := db.s
 
-	ikey := makeInternalKey(nil, []byte(key), keyMaxSeq, keyTypeVal)
+	ikey, err := makeInternalKey(nil, []byte(key), keyMaxSeq, keyTypeVal)
+	if err != nil {
+		t.Fatal("makeInternalKey error:", err)
+		return
+	}
 	iter := db.newRawIterator(nil, nil, nil, nil)
 	if !iter.Seek(ikey) && iter.Error() != nil {
 		t.Error("AllEntries: error during seek, err: ", iter.Error())
@@ -2619,7 +2623,11 @@ func TestDB_TableCompactionBuilder(t *testing.T) {
 			key := []byte(fmt.Sprintf("%09d", k))
 			seq += nSeq - 1
 			for x := uint64(0); x < nSeq; x++ {
-				if err := tw.append(makeInternalKey(nil, key, seq-x, keyTypeVal), value); err != nil {
+				ik, ikErr := makeInternalKey(nil, key, seq-x, keyTypeVal)
+				if ikErr != nil {
+					t.Fatal("makeInternalKey error:", ikErr)
+				}
+				if err := tw.append(ik, value); err != nil {
 					t.Fatal(err)
 				}
 			}
