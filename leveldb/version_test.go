@@ -11,6 +11,7 @@ import (
 	"github.com/kolide/goleveldb/leveldb/storage"
 	"github.com/kolide/goleveldb/leveldb/testutil"
 	"github.com/onsi/gomega"
+	"github.com/stretchr/testify/require"
 )
 
 type testFileRec struct {
@@ -38,9 +39,7 @@ func TestVersionStaging(t *testing.T) {
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
 		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
-		if err != nil {
-			panic(err) // Test helper - should not fail with valid parameters
-		}
+		require.NoError(t, err, "making internal key")
 		return []byte(ik)
 	}
 
@@ -249,9 +248,7 @@ func TestVersionReference(t *testing.T) {
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
 		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
-		if err != nil {
-			panic(err) // Test helper - should not fail with valid parameters
-		}
+		require.NoError(t, err, "making internal key")
 		return []byte(ik)
 	}
 
@@ -406,9 +403,7 @@ func benchmarkVersionStaging(b *testing.B, trivial bool, size int) {
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
 		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
-		if err != nil {
-			panic(err) // Test helper - should not fail with valid parameters
-		}
+		require.NoError(b, err, "making internal key")
 		return []byte(ik)
 	}
 

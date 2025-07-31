@@ -15,6 +15,7 @@ import (
 	"github.com/kolide/goleveldb/leveldb/storage"
 	"github.com/kolide/goleveldb/leveldb/testutil"
 	"github.com/onsi/gomega"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetOverlaps(t *testing.T) {
@@ -41,9 +42,7 @@ func TestGetOverlaps(t *testing.T) {
 			return key
 		}
 		ik, err := makeInternalKey(nil, tmp, 0, typ)
-		if err != nil {
-			panic(err) // Test helper - should not fail with valid parameters
-		}
+		require.NoError(t, err, "making internal key")
 		return []byte(ik)
 	}
 
@@ -139,9 +138,7 @@ func benchmarkGetOverlap(b *testing.B, level int, size int) {
 			return key
 		}
 		ik, err := makeInternalKey(nil, tmp, 0, typ)
-		if err != nil {
-			panic(err) // Test helper - should not fail with valid parameters
-		}
+		require.NoError(b, err, "making internal key")
 		return []byte(ik)
 	}
 

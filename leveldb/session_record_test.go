@@ -9,6 +9,8 @@ package leveldb
 import (
 	"bytes"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func decodeEncode(v *sessionRecord) (res bool, err error) {
@@ -47,19 +49,13 @@ func TestSessionRecord_EncodeDecode(t *testing.T) {
 	for ; i < 4; i++ {
 		test()
 		ik1, err1 := makeInternalKey(nil, []byte("foo"), uint64(big+500+1), keyTypeVal)
-		if err1 != nil {
-			panic(err1) // Test code - should not fail with valid parameters
-		}
+		require.NoError(t, err1, "making internal key for foo")
 		ik2, err2 := makeInternalKey(nil, []byte("zoo"), uint64(big+600+1), keyTypeDel)
-		if err2 != nil {
-			panic(err2) // Test code - should not fail with valid parameters
-		}
+		require.NoError(t, err2, "making internal key for zoo")
 		v.addTable(3, big+300+i, big+400+i, ik1, ik2)
 		v.delTable(4, big+700+i)
 		ik3, err3 := makeInternalKey(nil, []byte("x"), uint64(big+900+1), keyTypeVal)
-		if err3 != nil {
-			panic(err3) // Test code - should not fail with valid parameters
-		}
+		require.NoError(t, err3, "making internal key for x")
 		v.addCompPtr(int(i), ik3)
 	}
 
