@@ -116,7 +116,11 @@ func (tr *Transaction) flush() error {
 }
 
 func (tr *Transaction) put(kt keyType, key, value []byte) error {
-	tr.ikScratch = makeInternalKey(tr.ikScratch, key, tr.seq+1, kt)
+	var err error
+	tr.ikScratch, err = makeInternalKey(tr.ikScratch, key, tr.seq+1, kt)
+	if err != nil {
+		return err
+	}
 	if tr.mem.Free() < len(tr.ikScratch)+len(value) {
 		if err := tr.flush(); err != nil {
 			return err

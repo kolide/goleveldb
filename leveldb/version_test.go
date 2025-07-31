@@ -11,6 +11,7 @@ import (
 	"github.com/kolide/goleveldb/leveldb/storage"
 	"github.com/kolide/goleveldb/leveldb/testutil"
 	"github.com/onsi/gomega"
+	"github.com/stretchr/testify/require"
 )
 
 type testFileRec struct {
@@ -37,7 +38,9 @@ func TestVersionStaging(t *testing.T) {
 	tmp := make([]byte, 4)
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
-		return []byte(makeInternalKey(nil, tmp, 0, keyTypeVal))
+		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
+		require.NoError(t, err, "making internal key")
+		return []byte(ik)
 	}
 
 	for i, x := range []struct {
@@ -244,7 +247,9 @@ func TestVersionReference(t *testing.T) {
 	tmp := make([]byte, 4)
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
-		return []byte(makeInternalKey(nil, tmp, 0, keyTypeVal))
+		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
+		require.NoError(t, err, "making internal key")
+		return []byte(ik)
 	}
 
 	// Test normal version task correctness
@@ -397,7 +402,9 @@ func benchmarkVersionStaging(b *testing.B, trivial bool, size int) {
 	tmp := make([]byte, 4)
 	mik := func(i uint64) []byte {
 		binary.BigEndian.PutUint32(tmp, uint32(i))
-		return []byte(makeInternalKey(nil, tmp, 0, keyTypeVal))
+		ik, err := makeInternalKey(nil, tmp, 0, keyTypeVal)
+		require.NoError(b, err, "making internal key")
+		return []byte(ik)
 	}
 
 	rec := &sessionRecord{}

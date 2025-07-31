@@ -65,10 +65,22 @@ func (db *DB) newIterator(auxm *memDB, auxt tFiles, seq uint64, slice *util.Rang
 	if slice != nil {
 		islice = &util.Range{}
 		if slice.Start != nil {
-			islice.Start = makeInternalKey(nil, slice.Start, keyMaxSeq, keyTypeSeek)
+			var err error
+			islice.Start, err = makeInternalKey(nil, slice.Start, keyMaxSeq, keyTypeSeek)
+			if err != nil {
+				// Return an iterator with the error set
+				iter := &dbIter{err: err}
+				return iter
+			}
 		}
 		if slice.Limit != nil {
-			islice.Limit = makeInternalKey(nil, slice.Limit, keyMaxSeq, keyTypeSeek)
+			var err error
+			islice.Limit, err = makeInternalKey(nil, slice.Limit, keyMaxSeq, keyTypeSeek)
+			if err != nil {
+				// Return an iterator with the error set
+				iter := &dbIter{err: err}
+				return iter
+			}
 		}
 	}
 	rawIter := db.newRawIterator(auxm, auxt, islice, ro)
@@ -191,7 +203,11 @@ func (i *dbIter) Seek(key []byte) bool {
 		return false
 	}
 
-	ikey := makeInternalKey(nil, key, i.seq, keyTypeSeek)
+	ikey, err := makeInternalKey(nil, key, i.seq, keyTypeSeek)
+	if err != nil {
+		i.err = err
+		return false
+	}
 	if i.iter.Seek(ikey) {
 		i.dir = dirSOI
 		return i.next()

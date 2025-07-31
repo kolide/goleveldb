@@ -72,17 +72,17 @@ func init() {
 
 type internalKey []byte
 
-func makeInternalKey(dst, ukey []byte, seq uint64, kt keyType) internalKey {
+func makeInternalKey(dst, ukey []byte, seq uint64, kt keyType) (internalKey, error) {
 	if seq > keyMaxSeq {
-		panic("leveldb: invalid sequence number")
+		return nil, fmt.Errorf("leveldb: invalid sequence number (max %d but got %d)", keyMaxSeq, seq)
 	} else if kt > keyTypeVal {
-		panic("leveldb: invalid type")
+		return nil, fmt.Errorf("leveldb: invalid type (max %d but got %d)", keyTypeVal, kt)
 	}
 
 	dst = ensureBuffer(dst, len(ukey)+8)
 	copy(dst, ukey)
 	binary.LittleEndian.PutUint64(dst[len(ukey):], (seq<<8)|uint64(kt))
-	return internalKey(dst)
+	return internalKey(dst), nil
 }
 
 func parseInternalKey(ik []byte) (ukey []byte, seq uint64, kt keyType, err error) {
