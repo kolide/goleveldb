@@ -74,9 +74,9 @@ type internalKey []byte
 
 func makeInternalKey(dst, ukey []byte, seq uint64, kt keyType) (internalKey, error) {
 	if seq > keyMaxSeq {
-		return nil, errors.New("leveldb: invalid sequence number")
+		return nil, fmt.Errorf("leveldb: invalid sequence number (max %d but got %d)", keyMaxSeq, seq)
 	} else if kt > keyTypeVal {
-		return nil, errors.New("leveldb: invalid type")
+		return nil, fmt.Errorf("leveldb: invalid type (max %d but got %d)", keyTypeVal, kt)
 	}
 
 	dst = ensureBuffer(dst, len(ukey)+8)
