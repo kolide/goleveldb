@@ -1,0 +1,178 @@
+{
+  "formatters": {
+    "enable": [
+      "gofmt"
+    ],
+    "exclusions": {
+      "generated": "lax",
+      "paths": [
+        "test-cmds",
+        "third_party$",
+        "builtin$",
+        "examples$"
+      ]
+    },
+    "settings": {
+      "gofmt": {
+        "simplify": false
+      }
+    }
+  },
+  "linters": {
+    "disable": [
+      "errcheck",
+      "gosec"
+    ],
+    "enable": [
+      "bodyclose",
+      "containedctx",
+      "gocritic",
+      "misspell",
+      "noctx",
+      "perfsprint",
+      "rowserrcheck",
+      "sloglint",
+      "sqlclosecheck",
+      "unconvert",
+      "usetesting"
+    ],
+    "exclusions": {
+      "generated": "lax",
+      "paths": [
+        "test-cmds",
+        "third_party$",
+        "builtin$",
+        "examples$"
+      ],
+      "presets": [
+        "comments",
+        "common-false-positives",
+        "legacy",
+        "std-error-handling"
+      ],
+      "rules": [
+        {
+          "linters": [
+            "paralleltest"
+          ],
+          "text": "does not use range value in test Run"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with string concatenation"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with faster hex.EncodeToString"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with faster strconv.FormatBool"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with faster strconv.FormatInt"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with faster strconv.FormatUint"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprintf can be replaced with faster strconv.Itoa"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "fmt.Sprint can be replaced with faster strconv.Itoa"
+        }
+      ]
+    },
+    "settings": {
+      "errcheck": {
+        "exclude-functions": [
+          "github.com/go-kit/kit/log:Log"
+        ]
+      },
+      "gocritic": {
+        "disabled-checks": [
+          "ifElseChain",
+          "elseif"
+        ]
+      },
+      "revive": {
+        "rules": [
+          {
+            "arguments": [
+              "preserveScope"
+            ],
+            "disabled": false,
+            "name": "superfluous-else",
+            "severity": "warning"
+          },
+          {
+            "disabled": false,
+            "name": "package-comments"
+          },
+          {
+            "disabled": false,
+            "name": "context-as-argument"
+          },
+          {
+            "disabled": false,
+            "name": "context-keys-type"
+          },
+          {
+            "disabled": false,
+            "name": "error-return"
+          },
+          {
+            "disabled": false,
+            "name": "errorf"
+          },
+          {
+            "disabled": false,
+            "name": "unreachable-code"
+          },
+          {
+            "disabled": false,
+            "name": "early-return"
+          },
+          {
+            "disabled": false,
+            "name": "confusing-naming"
+          },
+          {
+            "disabled": false,
+            "name": "defer"
+          }
+        ]
+      },
+      "sloglint": {
+        "context": "all",
+        "key-naming-case": "snake",
+        "kv-only": true,
+        "static-msg": true
+      },
+      "staticcheck": {
+        "checks": [
+          "all"
+        ]
+      }
+    }
+  },
+  "version": "2"
+}
