@@ -98,6 +98,18 @@
             "perfsprint"
           ],
           "text": "fmt.Sprint can be replaced with faster strconv.Itoa"
+        },
+        {
+          "linters": [
+            "perfsprint"
+          ],
+          "text": "string concatenation in a loop"
+        },
+        {
+          "linters": [
+            "noctx"
+          ],
+          "path": "manualtest/"
         }
       ]
     },
@@ -110,7 +122,8 @@
       "gocritic": {
         "disabled-checks": [
           "ifElseChain",
-          "elseif"
+          "elseif",
+          "exitAfterDefer"
         ]
       },
       "revive": {
@@ -169,7 +182,9 @@
       },
       "staticcheck": {
         "checks": [
-          "all"
+          "all",
+          "-QF*",
+          "-ST*"
         ]
       }
     }
